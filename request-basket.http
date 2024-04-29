@@ -1,0 +1,51 @@
+### = Seperates the requests
+
+### Get UserProfile by ID
+
+http://localhost:3005/basket/36
+
+### - Get all Assets
+
+http://localhost:3005/basket
+
+### - Drop table with all Assets
+
+http://localhost:3005/basket/1;DROP TABLE basket;
+
+### Add UserProfile - works
+
+POST http://localhost:3005/basket HTTP/1.1
+content-type: application/json
+
+{
+  "user_id": 36,
+  "productid": 3,
+  "productname": "Classic Cali",
+  "price": 99.99,
+  "category": "Adidas",
+  "quantity": 3
+}
+
+
+
+### Update UserProfile
+
+PUT http://localhost:3005/basket/34 HTTP/1.1 
+content-type: application/json
+
+{
+  "user_id": 34,  
+  "bio": "Andreas: ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "date_of_birth": "1985-12-16",
+  "location": "Sample location 3",
+  "website_url": "http://example3.com",
+  "profile_picture_url": "https://upload.wikimedia.org/wikipedia/en/b/b1/Portrait_placeholder.png"
+}
+
+### Delete UserProfile
+
+DELETE http://localhost:3005/basket/35 HTTP/1.1 
+content-type: application/json
+
+
+

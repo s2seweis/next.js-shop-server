@@ -1,0 +1,54 @@
+### = Seperates the requests
+
+### Get ContactInformation by ID
+
+http://localhost:3005/contact-information/3
+
+### - Get all Assets
+
+http://localhost:3005/contact-information
+
+### - Drop table with all Assets
+
+http://localhost:3005/contact-information/1;DROP TABLE contact-information;
+
+### Add ContactInformation - works
+
+POST http://localhost:3005/contact-information HTTP/1.1 
+content-type: application/json
+
+{
+  "user_id": 35,
+  "email": "sample@example.com",
+  "phone_number": "+1234567890",
+  "address_line1": "123 Main Street",
+  "address_line2": "Apt 45",
+  "city": "Sample City",
+  "state": "Sample State",
+  "postal_code": "12345",
+  "country": "Sample Country"
+}
+
+
+
+### Update ContactInformation
+
+PUT http://localhost:3005/contact-information/34 HTTP/1.1 
+content-type: application/json
+
+{
+  "user_id": 34,  
+  "bio": "Andreas: ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "date_of_birth": "1985-12-16",
+  "location": "Sample location 3",
+  "website_url": "http://example3.com",
+  "profile_picture_url": "https://upload.wikimedia.org/wikipedia/en/b/b1/Portrait_placeholder.png"
+}
+
+### Delete ContactInformation
+
+DELETE http://localhost:3005/contact-information/35 HTTP/1.1 
+content-type: application/json
+
+
+

@@ -1,0 +1,41 @@
+### = Seperates the requests
+
+### Get Asset by ID
+
+http://localhost:3005/assets/1
+
+### - Get all Assets
+
+http://localhost:3005/assets
+
+### - Drop table with all Assets
+
+http://localhost:3005/assets/1;DROP TABLE assets;
+
+### Add Asset - works
+
+POST http://localhost:3005/assets HTTP/1.1 
+content-type: application/json
+
+{
+    "username": "Lucas",
+    "bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+}
+
+### Update Asset
+
+PUT http://localhost:3005/assets/1 HTTP/1.1 
+content-type: application/json
+
+{
+    "username": "Tom",
+    "bio": "How are you?"
+}
+
+### Delete Asset
+
+DELETE http://localhost:3005/assets/1 HTTP/1.1 
+content-type: application/json
+
+
+

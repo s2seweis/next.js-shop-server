@@ -1,0 +1,47 @@
+### = Seperates the requests
+
+### Get NotificationPreference by ID - works
+
+http://localhost:3005/notification-preference/41
+
+### - Get all NotificationPreference - works
+
+http://localhost:3005/notification-preference
+
+### - Drop table with all NotificationPreference
+
+http://localhost:3005/notification-preferences/1;DROP TABLE NotificationPreference;
+
+### Add NotificationPreference - works
+
+POST http://localhost:3005/notification-preference HTTP/1.1
+Content-Type: application/json
+
+{
+  "user_id": 41,
+  "email_notifications": false,
+  "push_notifications": true,
+  "sms_notifications": false,
+  "in_app_notifications": true
+}
+
+### Update NotificationPreference
+
+PUT http://localhost:3005/notification-preference/41 HTTP/1.1
+content-type: application/json
+
+{
+  "user_id": 41,
+  "email_notifications": true,
+  "push_notifications": true,
+  "sms_notifications": true,
+  "in_app_notifications": true
+}
+
+### Delete NotificationPreference - works
+
+DELETE http://localhost:3005/notification-preference/32 HTTP/1.1 
+content-type: application/json
+
+
+
