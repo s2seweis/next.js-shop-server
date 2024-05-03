@@ -21,11 +21,14 @@ router.post('/requestResetPassword', async (req, res) => {
 
 // Route to handle password reset
 router.post('/resetPassword', async (req, res) => {
-    const { userId, token, newPassword } = req.body;
-
+    const { userId, token, password } = req.body;
+    console.log("line:100", userId);
+    console.log("line:200", token);
+    console.log("line:300", password);
+    const user_id = userId;
     try {
         // Reset the user's password
-        const user = await ResetRepo.resetPassword(userId, token, newPassword);
+        const user = await ResetRepo.resetPassword(user_id, token, password);
 
         // Password successfully reset
         return res.status(200).json({ message: 'Password reset successfully', user });

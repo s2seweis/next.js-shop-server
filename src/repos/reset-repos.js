@@ -62,44 +62,44 @@ class ResetRepo {
     return { link: resetLink };
   }
 
-  static async resetPassword(userId, token, newPassword) {
+  static async resetPassword(user_id, token, password) {
     // Find the reset token for the user
-    const query = `
-      SELECT * FROM tokens
-      WHERE user_id = $1
-      AND token = $2;
-    `;
-    const { rows: [passwordResetToken] } = await pool.query(query, [userId, token]);
+    // const query = `
+    //   SELECT * FROM tokens
+    //   WHERE user_id = $1
+    //   AND token = $2;
+    // `;
+    // const { rows: [passwordResetToken] } = await pool.query(query, [user_id, token]);
 
-    // If token not found or token doesn't match
-    if (!passwordResetToken || !(await bcrypt.compare(token, passwordResetToken.token))) {
-      throw new Error('Invalid or expired password reset token');
-    }
+    // // If token not found or token doesn't match
+    // if (!passwordResetToken || !(await bcrypt.compare(token, passwordResetToken.token))) {
+    //   throw new Error('Invalid or expired password reset token');
+    // }
 
     // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, Number(process.env.BCRYPT_SALT));
+    const hashedPassword = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
 
     // Update the user's password
     const updateQuery = `
-      UPDATE users
-      SET password = $1
-      WHERE id = $2;
+      UPDATE authentication
+      SET password_hash = $1
+      WHERE user_id = $2;
     `;
-    await pool.query(updateQuery, [hashedPassword, userId]);
+    await pool.query(updateQuery, [hashedPassword, user_id]);
 
     // Delete the reset token from database
-    const deleteQuery = `
-      DELETE FROM tokens
-      WHERE user_id = $1;
-    `;
-    await pool.query(deleteQuery, [userId]);
+    // const deleteQuery = `
+    //   DELETE FROM tokens
+    //   WHERE user_id = $1;
+    // `;
+    // await pool.query(deleteQuery, [user_id]);
 
     // Retrieve updated user information
     const userQuery = `
       SELECT * FROM users
-      WHERE id = $1;
+      WHERE user_id = $1;
     `;
-    const { rows: [user] } = await pool.query(userQuery, [userId]);
+    const { rows: [user] } = await pool.query(userQuery, [user_id]);
 
     // Send email to the user
     sendEmail(
@@ -108,7 +108,9 @@ class ResetRepo {
       {
         name: user.name,
       },
-      "./utils/email/template/resetPassword.handlebars"
+      // "./utils/email/template/resetPassword.handlebars"
+      "./template/resetPassword.handlebars"
+
     );
 
     return user;
