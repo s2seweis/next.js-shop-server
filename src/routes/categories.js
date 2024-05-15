@@ -5,6 +5,7 @@ const { log } = require("handlebars/runtime");
 const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid'); // Import uuidv4
 const multer = require('multer');
+require('dotenv').config();
 
 const router = express.Router();
 
@@ -39,73 +40,6 @@ router.get("/categories/:id", async (req, res) => {
   }
 });
 
-// ###
-
-// AWS.config.update({
-//   accessKeyId: 'YOUR_ACCESS_KEY_ID',
-//   secretAccessKey: 'YOUR_SECRET_ACCESS_KEY',
-//   region: 'YOUR_REGION', // e.g., 'us-east-1'
-// });
-
-// const s3 = new AWS.S3();
-// const bucketName = 'YOUR_BUCKET_NAME';
-
-// ###
-
-// // Add category
-// router.post("/category", async (req, res) => {
-//   try {
-//     const { category_name, category_image, number_of_products } = req.body;
-//     console.log("line:99", req.body);
-//     console.log("line:100", category_name);
-//     console.log("line:200", category_image);
-//     console.log("line:300", number_of_products);
-
-//     // ### AWS Bucket
-
-//     async function uploadImageToS3(filePath, fileName) {
-//       const fileContent = fs.readFileSync(filePath);
-    
-//       const params = {
-//         Bucket: bucketName,
-//         Key: fileName,
-//         Body: fileContent,
-//         ACL: 'public-read', // Make the uploaded image publicly accessible
-//       };
-    
-//       try {
-//         const data = await s3.upload(params).promise();
-//         console.log('File uploaded successfully:', data.Location);
-//         return data.Location; // Return the URL of the uploaded image
-//       } catch (error) {
-//         console.error('Error uploading file:', error);
-//         throw error;
-//       }
-//     }
-
-//     // ###
-
-//     // Validate required fields
-//     if (!category_name) {
-//       return res
-//         .status(400)
-//         .json({ error: "Category name is required." });
-//     }
-
-//     // Validate number_of_products is a valid number
-//     if (number_of_products && (isNaN(number_of_products) || parseInt(number_of_products) < 0)) {
-//       return res
-//         .status(400)
-//         .json({ error: "Number of products must be a valid non-negative integer." });
-//     }
-
-//     const category = await CategoryRepo.insert(category_name, category_image, number_of_products);
-//     res.status(201).json(category);
-//   } catch (error) {
-//     console.error("Error adding category:", error.message);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -132,11 +66,11 @@ router.post("/category", upload.single('category_image'), async (req, res) => {
 
     const params = {
       Bucket: process.env.BUCKET_NAME,
-      // Bucket: 'delivery-shop-demo',
       Key: fileName,
       Body: buffer,
-      ACL: 'public-read',
+      // ACL: 'public-read',
       ContentType: 'image/png', // Specify content type
+      // makes direct out of it an png???
     };
 
     console.log("line:5", params);
