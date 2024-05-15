@@ -12,8 +12,10 @@ const productsRouter = require("./routes/products");
 const resetRouter = require("./routes/reset");
 // ###
 const basketRouter = require("./routes/basket");
-// ### - here
+// ### 
 const notificationRouter = require("./routes/notifications");
+// ### 
+const categoriesRouter = require("./routes/categories");
 require("dotenv").config();
 
 const cors = require("cors");
@@ -35,6 +37,7 @@ module.exports = () => {
   app.use(basketRouter);
   app.use(resetRouter);
   app.use(notificationRouter);
+  app.use(categoriesRouter);
 
   return app;
 };

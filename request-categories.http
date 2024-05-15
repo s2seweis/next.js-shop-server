@@ -1,0 +1,38 @@
+### Get category by ID
+
+http://localhost:3005/category/5
+
+### Get all categories - 
+
+http://localhost:3005/categories
+
+### Drop table with all categories
+
+http://localhost:3005/category/1;DROP TABLE category;
+
+### Add category - works
+
+POST http://localhost:3005/category HTTP/1.1
+Content-Type: application/json
+
+{
+  "categoryName": "Electronics",
+  "categoryImage": "https://example.com/electronics.jpg",
+  "numberOfProducts": 150
+}
+
+### Update category
+
+PUT http://localhost:3005/category/15 HTTP/1.1 
+Content-Type: application/json
+
+{
+  "categoryName": "Updated Electronics",
+  "categoryImage": "https://example.com/updated-electronics.jpg",
+  "numberOfProducts": 200
+}
+
+### Delete category
+
+DELETE http://localhost:3005/category/15 HTTP/1.1 
+Content-Type: application/json
