@@ -6,6 +6,8 @@ const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid'); // Import uuidv4
 const multer = require('multer');
 require('dotenv').config();
+const mime = require('mime-types');
+
 
 const router = express.Router();
 
@@ -51,26 +53,26 @@ const s3 = new AWS.S3({
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Add category
 router.post("/category", upload.single('category_image'), async (req, res) => {
   try {
     const { category_name, number_of_products } = req.body;
     console.log("line:1", category_name);
     console.log("line:2", number_of_products);
-    console.log("line:3", req.file); // Use req.file instead of req.files
+    console.log("line:3", req.file);
 
-    const buffer = req.file.buffer; // Access the file buffer from req.file
+    const buffer = req.file.buffer;
+    const mimeType = req.file.mimetype;
+    const extension = mime.extension(mimeType);
+    const fileName = `${uuidv4()}.${extension}`;
 
-    const fileName = `${uuidv4()}.png`;
     console.log("line:4", fileName);
 
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Key: fileName,
       Body: buffer,
-      // ACL: 'public-read',
-      ContentType: 'image/png', // Specify content type
-      // makes direct out of it an png???
+      ContentType: mimeType, // Set the correct content type,
+      ACL: 'public-read', // Set ACL to public read
     };
 
     console.log("line:5", params);
@@ -82,13 +84,15 @@ router.post("/category", upload.single('category_image'), async (req, res) => {
       }
 
       const category_image = data.Location;
+      const key = data.Key;
       console.log("line:6", category_image);
+      console.log("line:7", key);
 
       // Insert category data into database
-      await CategoryRepo.insert(category_name, category_image, number_of_products);
+      await CategoryRepo.insert(category_name, category_image, number_of_products, key);
       
       // Send the category_image in the response
-      res.json({ category_image });
+      res.json({ category_image, key });
     });
   } catch (error) {
     console.error('Error:', error);
@@ -128,16 +132,35 @@ router.delete("/category/:id", async (req, res) => {
     const { id } = req.params;
     console.log("line:100", id);
     const category_id = id;
+    
+    // Access the key from the request body
+    const { key } = req.body; 
+    console.log("line:200", key);
+
+    const params = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: key
+    };
+
+    try {
+      // Delete the image from S3
+      await s3.deleteObject(params).promise();
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      return res.status(500).json({ error: 'Failed to delete image' });
+    }
+
+    // Delete the category from the database
     const deletedCategory = await CategoryRepo.delete(category_id);
 
     if (deletedCategory) {
-      res.send(deletedCategory);
+      res.json({ message: 'Category and image deleted successfully' });
     } else {
       res.sendStatus(404);
     }
   } catch (error) {
     console.error("Error deleting category:", error.message);
-    res.status(500).send({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

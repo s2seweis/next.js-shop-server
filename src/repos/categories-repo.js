@@ -21,10 +21,10 @@ class CategoriesRepo {
     return toCamelCase(rows)[0];
   }
 
-  static async insert(category_name, category_image, number_of_products) {
+  static async insert(category_name, category_image, number_of_products, key) {
     const { rows } = await pool.query(
-      "INSERT INTO Categories (category_name, category_image, number_of_products) VALUES ($1, $2, $3) RETURNING *;",
-      [category_name, category_image, number_of_products]
+      "INSERT INTO Categories (category_name, category_image, number_of_products, key) VALUES ($1, $2, $3, $4) RETURNING *;",
+      [category_name, category_image, number_of_products, key]
     );
 
     return toCamelCase(rows)[0];
