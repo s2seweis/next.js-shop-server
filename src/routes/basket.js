@@ -7,8 +7,6 @@ const router = express.Router();
 router.get("/basket", async (req, res) => {
   try {
     const basket = await BasketRepo.find();
-    // console.log("line:500", basket);
-
     res.send(basket);
   } catch (error) {
     console.error("Error getting basket:", error.message);
@@ -38,13 +36,7 @@ router.post("/basket", async (req, res) => {
   try {
     const { user_id, productid, productname, price, category, quantity } =
       req.body;
-    console.log("line:1", user_id);
-    console.log("line:2", productid);
-    console.log("line:3", productname);
-    console.log("line:4", price);
-    console.log("line:5", category);
-    console.log("line:6", quantity);
-
+ 
     // Assuming BasketRepo.insert takes an object representing basket properties
     const basket = await BasketRepo.insert({
       user_id,
@@ -66,7 +58,6 @@ router.post("/basket", async (req, res) => {
 router.put("/basket/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:1", id);
     const {
       user_id,
       bio,
@@ -118,12 +109,6 @@ router.post("/basket/add", async (req, res) => {
   try {
     const { userid, productid, productname, price, category, quantity } =
       req.body;
-    console.log("line:1", userid);
-    console.log("line:2", productid);
-    console.log("line:3", productname);
-    console.log("line:4", price);
-    console.log("line:5", category);
-    console.log("line:6", quantity);
 
     // Find the existing basket item for the user and product
     const existingBasketItem = await BasketRepo.findByUserAndProduct(
@@ -160,15 +145,12 @@ router.post("/basket/add", async (req, res) => {
 router.post("/basket/remove", async (req, res) => {
   try {
     const { userid, productid } = req.body;
-    console.log("line:1", userid);
-    console.log("line:2", productid);
-
+  
     // Find the basket item by user and product
     const basketItemToRemove = await BasketRepo.findByUserAndProduct(
       userid,
       productid
     );
-    console.log("line:3", basketItemToRemove);
 
     if (basketItemToRemove) {
       // If the basket item exists, remove it
@@ -190,16 +172,12 @@ router.post("/basket/remove", async (req, res) => {
 router.post("/basket/updateQuantity", async (req, res) => {
   try {
     const { userid, productid, quantity } = req.body;
-    console.log("line:1", userid);
-    console.log("line:2", productid);
-    console.log("line:3", quantity);
-
+    
     // Find the basket item by user and product
     const basketItemToUpdate = await BasketRepo.findByUserAndProduct(
       userid,
       productid
     );
-    console.log("line:4", basketItemToUpdate);
 
     if (basketItemToUpdate) {
       // If the basket item exists, update the quantity

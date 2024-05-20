@@ -65,7 +65,6 @@ class UserRepo {
   static async updatePassword(user_id, newPassword) {
     try {
       const password_hash = await bcrypt.hash(newPassword, 10);
-      console.log("line:88", password_hash);
   
       const { rows } = await pool.query(
         "UPDATE Authentication SET password_hash = $2 WHERE user_id = $1 RETURNING *;",

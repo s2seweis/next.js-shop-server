@@ -7,7 +7,6 @@ const router = express.Router();
 router.get("/userprofile", async (req, res) => {
   try {
     const userprofile = await UsersProfileRepo.find();
-    // console.log("line:500", userprofile);
 
     const dateOfBirthArray = userprofile.map((item) => item.dateOfBirth);
 
@@ -22,9 +21,7 @@ router.get("/userprofile", async (req, res) => {
 router.get("/userprofile/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:100", id);
     const userProfile = await UsersProfileRepo.findById(id);
-    console.log("line:200", userProfile);
 
     if (userProfile) {
       res.send(userProfile);
@@ -48,12 +45,7 @@ router.post("/userprofile", async (req, res) => {
       website_url,
       profile_picture_url,
     } = req.body;
-    console.log("line:1", user_id);
-    console.log("line:2", bio);
-    console.log("line:3", date_of_birth);
-    console.log("line:4", location);
-    console.log("line:5", website_url);
-    console.log("line:6", profile_picture_url);
+   
     const userProfile = await UsersProfileRepo.insert(
       user_id,
       bio,
@@ -73,7 +65,7 @@ router.post("/userprofile", async (req, res) => {
 router.put("/userprofile/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:1", id);
+    
     const {
       user_id,
       bio,

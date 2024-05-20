@@ -7,7 +7,6 @@ const router = express.Router();
 router.get("/notification-preference", async (req, res) => {
   try {
     const accountStatus = await NotificationPreferencesRepo.find();
-    // console.log("line:500", accountStatus);
 
     res.send(accountStatus);
   } catch (error) {
@@ -20,7 +19,6 @@ router.get("/notification-preference", async (req, res) => {
 router.get("/notification-preference/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:1", id);
     const accountStatus = await NotificationPreferencesRepo.findById(id);
 
     if (accountStatus) {
@@ -45,12 +43,6 @@ router.post("/notification-preference", async (req, res) => {
       in_app_notifications,
     } = req.body;
 
-    console.log("line:1", user_id);
-    console.log("line:2", email_notifications);
-    console.log("line:3", push_notifications);
-    console.log("line:4", sms_notifications);
-    console.log("line:5", in_app_notifications);
-
     const userPreferences = await NotificationPreferencesRepo.insert(
       user_id,
       email_notifications,
@@ -70,7 +62,6 @@ router.post("/notification-preference", async (req, res) => {
 router.put("/notification-preference/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:0", id);
 
     const {
       email_notifications,
@@ -79,10 +70,7 @@ router.put("/notification-preference/:id", async (req, res) => {
       in_app_notifications,
       // Add other properties from the NotificationPreferences table as needed
     } = req.body;
-    console.log("line:1", email_notifications);
-    console.log("line:2", push_notifications);
-    console.log("line:3", sms_notifications);
-    console.log("line:4", in_app_notifications);
+    
     // Add other console.log statements for additional properties
 
     // Use the NotificationPreferencesRepo.update method to update the record
@@ -94,7 +82,6 @@ router.put("/notification-preference/:id", async (req, res) => {
       in_app_notifications
       // Add other parameter values here
     );
-    console.log("line:11", updatedProfile);
 
     if (updatedProfile !== undefined) {
       res.send(updatedProfile);
@@ -111,9 +98,7 @@ router.put("/notification-preference/:id", async (req, res) => {
 router.delete("/notification-preference/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:1", id);
     const deletedProfile = await NotificationPreferencesRepo.delete(id);
-    console.log("line:2", deletedProfile);
 
     if (deletedProfile) {
       res.send(deletedProfile);

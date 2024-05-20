@@ -5,10 +5,7 @@ const NotificationRepo = require('../repos/notification-repo');
 router.post('/notification', async (req, res) => {
   try {
     const { title, body, messageId } = req.body;
-    console.log("line:1", title);
-    console.log("line:2", body);
-    console.log("line:3", messageId);
-
+   
     // Validate required fields
     if (!title || !body || !messageId) {
       return res.status(400).json({ error: "Title, body, and messageId are required." });
@@ -42,7 +39,6 @@ router.get('/notification', async (req, res) => {
 // POST route to mark notifications as read
 router.post('/notification/read', async (req, res) => {
   try {
-    console.log("line:555 - Test");
     // Assuming you have a function in NotificationRepo to mark notifications as read
     await NotificationRepo.markNotificationsAsRead();
 

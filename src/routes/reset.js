@@ -6,12 +6,10 @@ const router = express.Router();
 // Route to handle password reset request
 router.post('/requestResetPassword', async (req, res) => {
   const { email } = req.body;
-  console.log("line:100", email);
 
   try {
     // Request password reset
     const result = await ResetRepo.requestPasswordReset(email);
-    console.log("line:200", result);
     
     res.status(200).json({ message: 'Password reset link sent successfully', link: result.link });
   } catch (error) {
@@ -22,9 +20,6 @@ router.post('/requestResetPassword', async (req, res) => {
 // Route to handle password reset
 router.post('/resetPassword', async (req, res) => {
     const { userId, token, password } = req.body;
-    console.log("line:100", userId);
-    console.log("line:200", token);
-    console.log("line:300", password);
     const user_id = userId;
     try {
         // Reset the user's password

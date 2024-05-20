@@ -10,7 +10,6 @@ class CategoriesRepo {
   }
 
   static async findById(categoryId) {
-    console.log("categoryId");
     const { rows } = await pool.query(
       `
       SELECT * FROM Categories WHERE categoryid = $1;
@@ -30,10 +29,24 @@ class CategoriesRepo {
     return toCamelCase(rows)[0];
   }
 
-  static async update(categoryId, category_name, category_image, number_of_products) {
+  // static async update(category_id, category_name, category_image, number_of_products, key) {
+  //   console.log("line:10",category_id );
+  //   console.log("line:11",category_name );
+  //   console.log("line:12",category_image);
+  //   console.log("line:13",number_of_products);
+  //   console.log("line:14", key);
+  //   const { rows } = await pool.query(
+  //     "UPDATE Categories SET category_name = $1, category_image = $2, number_of_products = $3, key = $4 WHERE category_id = $5 RETURNING *;",
+  //     [category_name, category_image, number_of_products, category_id, key]
+  //   );
+
+  //   return toCamelCase(rows)[0];
+  // }
+
+  static async update(categoryId, category_name, category_image, number_of_products, key) {
     const { rows } = await pool.query(
-      "UPDATE Categories SET category_name = $1, category_image = $2, number_of_products = $3 WHERE category_id = $4 RETURNING *;",
-      [category_name, category_image, number_of_products, categoryId]
+      "UPDATE Categories SET category_name = $1, category_image = $2, number_of_products = $3, key = $4 WHERE category_id = $5 RETURNING *;",
+      [category_name, category_image, number_of_products, key, categoryId]
     );
 
     return toCamelCase(rows)[0];

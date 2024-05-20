@@ -7,7 +7,6 @@ const router = express.Router();
 router.get("/contact-information", async (req, res) => {
   try {
     const contactinformation = await ContactInformationRepo.find();
-    // console.log("line:500", contactinformation);
 
     res.send(contactinformation);
   } catch (error) {
@@ -60,16 +59,6 @@ router.post("/contact-information", async (req, res) => {
       country
     );
 
-    console.log("line:1", user_id);
-    console.log("line:2", email);
-    console.log("line:3", phone_number);
-    console.log("line:4", address_line1);
-    console.log("line:5", address_line2);
-    console.log("line:6", city);
-    console.log("line:7", state);
-    console.log("line:8", postal_code);
-    console.log("line:9", country);
-
     res.send(userProfile);
   } catch (error) {
     console.error("Error adding userProfile:", error.message);
@@ -80,7 +69,6 @@ router.post("/contact-information", async (req, res) => {
 router.put("/contact-information/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    // console.log("line:1", id);
 
     const {
       user_id,
@@ -94,19 +82,7 @@ router.put("/contact-information/:id", async (req, res) => {
       country,
     } = req.body;
 
-    console.log("line:0", user_id);
-    console.log("line:1", email);
-    console.log("line:2", phone_number);
-    console.log("line:3", address_line1);
-    console.log("line:4", address_line2);
-    console.log("line:5", city);
-    console.log("line:6", state);
-    console.log("line:7", postal_code);
-    console.log("line:8", country);
-
     // Build an object with the fields that are not undefined in the request body
-
-    console.log("line:10", id);
 
     // Remove undefined values from the object
 
@@ -122,7 +98,6 @@ router.put("/contact-information/:id", async (req, res) => {
       postal_code,
       country
     );
-    console.log("line:11", updatedProfile);
 
     if (updatedProfile !== undefined) {
       res.send(updatedProfile);

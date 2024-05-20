@@ -18,7 +18,7 @@ router.get("/users", async (req, res) => {
 
 router.get("/users/:user_id", async (req, res) => {
   const { user_id } = req.params;
-  console.log("line:1000 - #####", user_id);
+
   const user = await UserRepo.findById(user_id);
 
   if (user) {
@@ -32,9 +32,7 @@ router.get("/users/:user_id", async (req, res) => {
 
 router.get("/password/:user_id", async (req, res) => {
   const { user_id } = req.params;
-  console.log("line:99 - #####", user_id);
   const password = await UserRepo.findByIdPassword(user_id);
-  console.log("line:100", password);
 
   if (password) {
     res.send(password);
@@ -71,16 +69,8 @@ router.post("/users", upload.none(), async (req, res) => {
 router.put("/users/:user_id", async (req, res) => {
   try {
     const { user_id } = req.params;
-    console.log("line:99", user_id);
     const { username, email, full_name, profile_picture_url, role } = req.body;
-    console.log("line:100", username);
-    console.log("line:101", email);
-    console.log("line:102", full_name);
-    console.log("line:103", username);
-    console.log("line:104", profile_picture_url);
-    console.log("line:105", role);
-    // console.log("line:105", role);
-
+   
     const user = await UserRepo.update(
       user_id,
       username,
@@ -89,7 +79,6 @@ router.put("/users/:user_id", async (req, res) => {
       profile_picture_url,
       role
     );
-    console.log("line:200", user);
 
     if (user) {
       res.send(user);
@@ -107,17 +96,13 @@ router.put("/users/:user_id", async (req, res) => {
 router.put("/password/:user_id", async (req, res) => {
   try {
     const { user_id } = req.params;
-    console.log("line:99", user_id);
     const { userId, newPassword } = req.body;
-    console.log("line:100", userId);
-    console.log("line:101", newPassword);
     
     const password = await UserRepo.updatePassword(
      user_id,
      newPassword
   
     );
-    console.log("line:200", password);
 
     if (password) {
       res.send(password);
@@ -134,7 +119,6 @@ router.put("/password/:user_id", async (req, res) => {
 
 router.delete("/users/:user_id", async (req, res) => {
   const { user_id } = req.params;
-  // console.log("line:500", user_id);
   const user = await UserRepo.delete(user_id);
 
   if (user) {

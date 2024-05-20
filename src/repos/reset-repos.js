@@ -8,7 +8,6 @@ class ResetRepo {
 
    // ###
    static async requestPasswordReset(email) {
-    console.log("line:300", email);
 
     // Find the user by email
     const userQuery = `
@@ -17,7 +16,6 @@ class ResetRepo {
     `;
 
     const { rows: [user] } = await pool.query(userQuery, [email]);
-    console.log("line:400", user);
 
     // If user not found
     if (!user) {
@@ -46,7 +44,6 @@ class ResetRepo {
 
     // Construct the reset link
     const resetLink = `${process.env.CLIENT_URL}/${resetToken}/${user.user_id}`;
-    console.log("line:500", resetLink);
 
     // Send email to the user
     sendEmail(

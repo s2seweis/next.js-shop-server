@@ -10,7 +10,6 @@ class UserPreferenceRepo {
 
   //   ### Get by ID
   static async findById(user_id) {
-    console.log("line:302", user_id);
     const { rows } = await pool.query(
       `
       SELECT * FROM userpreferences WHERE user_id = $1;

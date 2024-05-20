@@ -7,7 +7,6 @@ const router = express.Router();
 router.get("/product", async (req, res) => {
   try {
     const product = await ProductRepo.find();
-    // console.log("line:500", product);
 
     const dateOfBirthArray = product.map((item) => item.dateOfBirth);
 
@@ -22,7 +21,6 @@ router.get("/product", async (req, res) => {
 router.get("/product/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:1", id);
     const product = await ProductRepo.findById(id);
 
     if (product) {
@@ -39,25 +37,28 @@ router.get("/product/:id", async (req, res) => {
 // Add product
 router.post("/product", async (req, res) => {
   try {
-    const { ProductName, Price, Category } = req.body;
+    const { productname, price, category } = req.body;
+    console.log("line:1", productname);
+    console.log("line:2", price);
+    console.log("line:3", category);
 
     // Validate required fields
-    if (!ProductName || !Price || !Category) {
+    if (!productname || !price || !category) {
       return res
         .status(400)
         .json({ error: "Product name, price, and category are required." });
     }
 
-    // Validate Price is a valid number
-    if (isNaN(Price) || parseFloat(Price) <= 0) {
+    // Validate price is a valid number
+    if (isNaN(price) || parseFloat(price) <= 0) {
       return res
         .status(400)
-        .json({ error: "Price must be a valid number greater than zero." });
+        .json({ error: "price must be a valid number greater than zero." });
     }
 
     // Other validations can be added as needed
 
-    const product = await ProductRepo.insert(ProductName, Price, Category);
+    const product = await ProductRepo.insert(productname, price, category);
     res.status(201).json(product);
   } catch (error) {
     console.error("Error adding product:", error.message);
@@ -69,12 +70,8 @@ router.post("/product", async (req, res) => {
 router.put("/product/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:1", id);
     const { productname, price, category } = req.body;
-    console.log("line:2", productname);
-    console.log("line:3", price);
-    console.log("line:4", category);
-
+    
     const updatedProduct = await ProductRepo.update(
       productname,
       price,
@@ -97,7 +94,6 @@ router.put("/product/:id", async (req, res) => {
 router.delete("/product/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:100", id);
     const deletedProfile = await ProductRepo.delete(id);
 
     if (deletedProfile) {

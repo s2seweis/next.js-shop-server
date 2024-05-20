@@ -10,12 +10,7 @@ router.post("/register", upload.none(), async (req, res) => {
   try {
     const { username, email, full_name, profile_picture_url, password } =
       req.body;
-    console.log("line:1", username);
-    console.log("line:2", email);
-    console.log("line:3", full_name);
-    console.log("line:4", profile_picture_url);
-    console.log("line:5", password);
-
+   
     // Check if the user already exists
     const existingUser = await AuthRepo.getUserByEmail(email);
 
@@ -42,20 +37,13 @@ router.post("/register-oauth", upload.none(), async (req, res) => {
   try {
     const { email, full_name } =
       req.body;
-    console.log("line:2", email);
-    console.log("line:3", full_name);
     const role = 'user';
-    console.log("line:4", role);
     const username = 'guest';
-    console.log("line:5", username );
     const password = '123456'
-    console.log("line:6", password);
     const profile_picture_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/150px-Placeholder_no_text.svg.png?20180902010812';
-    console.log("line:7", profile_picture_url);
 
     // Check if the user already exists
     const existingUser = await AuthRepo.getUserByEmail(email);
-    console.log("line:8", existingUser);
 
     if (existingUser) {
       // res.status(400).json({ message: "User with this email already exists." });
@@ -83,12 +71,9 @@ router.post("/register-oauth", upload.none(), async (req, res) => {
 router.post("/login", upload.none(), async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("line:1", email);
-    console.log("line:2", password);
-
+   
     // Login the user
     const loginResult = await AuthRepo.loginUser({ email, password });
-    console.log("555", loginResult);
 
     // Return the token on successful login
     return res.json(loginResult);
@@ -101,12 +86,9 @@ router.post("/login", upload.none(), async (req, res) => {
 router.post("/login-oauth", upload.none(), async (req, res) => {
   try {
     const { email, name} = req.body;
-    console.log("line:1", email);
-    console.log("line:2", name);
-
+  
     // Login the user
     const loginResult = await AuthRepo.loginUserOauth({ email});
-    console.log("555", loginResult);
 
     // Return the token on successful login
     return res.json(loginResult);

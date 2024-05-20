@@ -11,7 +11,6 @@ class ProductsRepo {
   }
 
   static async findById(productid) {
-    console.log("productid");
     const { rows } = await pool.query(
       `
       SELECT * FROM Products WHERE productid = $1;
@@ -22,10 +21,10 @@ class ProductsRepo {
     return toCamelCase(rows)[0];
   }
 
-  static async insert(ProductName, Price, Category) {
+  static async insert(productname, price, category) {
     const { rows } = await pool.query(
-      "INSERT INTO Products (ProductName, Price, Category) VALUES ($1, $2, $3) RETURNING * ;",
-      [ProductName, Price, Category]
+      "INSERT INTO Products (productname, price, category) VALUES ($1, $2, $3) RETURNING * ;",
+      [productname, price, category]
     );
 
     return toCamelCase(rows)[0];
@@ -33,7 +32,7 @@ class ProductsRepo {
 
   static async update(productname, price, category, id) {
     const { rows } = await pool.query(
-      "UPDATE Products SET ProductName = $1, Price = $2, category = $3 WHERE Productid = $4 RETURNING *;",
+      "UPDATE Products SET productname = $1, price = $2, category = $3 WHERE Productid = $4 RETURNING *;",
       [productname, price, category, id]
     );
 

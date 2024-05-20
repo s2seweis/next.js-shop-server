@@ -105,8 +105,6 @@ class AuthRepo {
   async loginUser({ email, password }) {
     try {
       const user = await this.getUserByEmail(email);
-      console.log("line:200", user);
-      console.log("line:201", user.username);
 
       if (!user) {
         throw new Error("Invalid email or password");
@@ -115,7 +113,6 @@ class AuthRepo {
       const authQuery = `
         SELECT * FROM "authentication" WHERE user_id = $1;
       `;
-      console.log("line:4", authQuery);
 
       const authResult = await pool.query(authQuery, [user.userId]);
 
@@ -127,7 +124,6 @@ class AuthRepo {
         password,
         authResult.rows[0].password_hash
       );
-      console.log("line:5", passwordMatch);
 
       if (!passwordMatch) {
         throw new Error("Invalid email or password");
@@ -138,8 +134,6 @@ class AuthRepo {
         "12345678",
         { expiresIn: "1h" }
       );
-
-      console.log("line:6", token);
 
       const userid = user.userId;
       const role = user.role;
@@ -158,8 +152,6 @@ class AuthRepo {
   async loginUserOauth({ email }) {
     try {
       const user = await this.getUserByEmail(email);
-      console.log("line:200", user);
-      console.log("line:201", user.username);
 
       if (!user) {
         throw new Error("Invalid email or password");

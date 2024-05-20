@@ -15,8 +15,6 @@ const router = express.Router();
 router.get("/categories", async (req, res) => {
   try {
     const categories = await CategoryRepo.findAll();
-    console.log("line:199 - Where???");
-    console.log("line:200", categories);
     res.send(categories);
   } catch (error) {
     console.error("Error getting categories:", error.message);
@@ -28,7 +26,6 @@ router.get("/categories", async (req, res) => {
 router.get("/categories/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:1", id);
     const category = await CategoryRepo.findById(id);
 
     if (category) {
@@ -46,26 +43,22 @@ router.get("/categories/:id", async (req, res) => {
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_ACCESS_SECRET,
-  region:'eu-central-1'
+  region: 'eu-central-1'
 });
 
 // Set up multer for handling file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// ### Add Category
 router.post("/category", upload.single('category_image'), async (req, res) => {
   try {
     const { category_name, number_of_products } = req.body;
-    console.log("line:1", category_name);
-    console.log("line:2", number_of_products);
-    console.log("line:3", req.file);
 
     const buffer = req.file.buffer;
     const mimeType = req.file.mimetype;
     const extension = mime.extension(mimeType);
     const fileName = `${uuidv4()}.${extension}`;
-
-    console.log("line:4", fileName);
 
     const params = {
       Bucket: process.env.BUCKET_NAME,
@@ -75,8 +68,6 @@ router.post("/category", upload.single('category_image'), async (req, res) => {
       ACL: 'public-read', // Set ACL to public read
     };
 
-    console.log("line:5", params);
-
     s3.upload(params, async (err, data) => {
       if (err) {
         console.error('Error uploading image to S3:', err);
@@ -85,12 +76,10 @@ router.post("/category", upload.single('category_image'), async (req, res) => {
 
       const category_image = data.Location;
       const key = data.Key;
-      console.log("line:6", category_image);
-      console.log("line:7", key);
 
       // Insert category data into database
       await CategoryRepo.insert(category_name, category_image, number_of_products, key);
-      
+
       // Send the category_image in the response
       res.json({ category_image, key });
     });
@@ -100,29 +89,69 @@ router.post("/category", upload.single('category_image'), async (req, res) => {
   }
 });
 
-
 // Update category
-router.put("/category/:id", async (req, res) => {
+router.put("/category/:id", upload.single('category_image'), async (req, res) => {
+  const { id } = req.params;
+  const { category_name, number_of_products } = req.body;
+  const category_id = parseInt(id, 10);
+
+  if (isNaN(category_id)) {
+    return res.status(400).json({ error: 'Invalid category ID' });
+  }
+
+  const buffer = req.file?.buffer;
+  const mimeType = req.file?.mimetype;
+
+  if (!buffer || !mimeType) {
+    return res.status(400).json({ error: 'Invalid image file' });
+  }
+
+  const extension = mime.extension(mimeType);
+  const fileName = `${uuidv4()}.${extension}`;
+
   try {
-    const { id } = req.params;
-    console.log("line:1", id);
-    const category__id = id;
-    const { category_name, category_image, number_of_products } = req.body;
-    console.log("line:2", category_name);
-    console.log("line:3", category_image);
-    console.log("line:4", number_of_products);
+    // Delete the existing image from S3
+    const deleteParams = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: req.body.key
+    };
 
+    await s3.deleteObject(deleteParams).promise();
 
-    const updatedCategory = await CategoryRepo.update(category__id, category_name, category_image, number_of_products);
+    // Upload the new image to S3
+    const uploadParams = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: fileName,
+      Body: buffer,
+      ContentType: mimeType,
+      ACL: 'public-read'
+    };
 
-    if (updatedCategory) {
-      res.send(updatedCategory);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (error) {
-    console.error("Error updating category:", error.message);
-    res.status(500).send({ error: "Internal Server Error" });
+    s3.upload(uploadParams, async (err, data) => {
+      if (err) {
+        console.error('Error uploading image to S3:', err);
+        return res.status(500).json({ error: 'Failed to upload image' });
+      }
+
+      const category_image = data.Location;
+      const key = data.Key;
+
+      try {
+        const updatedCategory = await CategoryRepo.update(category_id, category_name, category_image, number_of_products, key);
+
+        if (updatedCategory) {
+          return res.json(updatedCategory);
+        } else {
+          return res.sendStatus(404);
+        }
+      } catch (dbError) {
+        console.error("Error updating category in database:", dbError);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+    });
+  } catch (s3Error) {
+    console.error('Error deleting image from S3:', s3Error);
+    return res.status(500).json({ error: 'Failed to delete image' });
   }
 });
 
@@ -130,12 +159,12 @@ router.put("/category/:id", async (req, res) => {
 router.delete("/category/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("line:100", id);
+    console.log("line:0", id);
     const category_id = id;
-    
+    console.log("line:1", category_id);
+
     // Access the key from the request body
     const { key } = req.body; 
-    console.log("line:200", key);
 
     const params = {
       Bucket: process.env.BUCKET_NAME,
