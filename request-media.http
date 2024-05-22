@@ -1,0 +1,13 @@
+# CREATE TABLE media (
+#     media_id SERIAL PRIMARY KEY,
+#     media_type VARCHAR(10) NOT NULL CHECK (media_type IN ('image', 'video')),
+#     url TEXT NOT NULL,
+#     title VARCHAR(255),
+#     description TEXT,
+#     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+# );
+
+# ### - Inner Join
+# SELECT m.url
+# FROM categories c
+# JOIN media m ON c.media_id = m.media_id;
