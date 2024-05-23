@@ -23,9 +23,10 @@ router.get("/categories", async (req, res) => {
 });
 
 // Get category by ID
-router.get("/categories/:id", async (req, res) => {
+router.get("/category/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("line:1", id);
     const category = await CategoryRepo.findById(id);
 
     if (category) {
@@ -92,66 +93,89 @@ router.post("/category", upload.single('category_image'), async (req, res) => {
 // Update category
 router.put("/category/:id", upload.single('category_image'), async (req, res) => {
   const { id } = req.params;
+  console.log("line:1", id);
   const { category_name, number_of_products } = req.body;
+  let { category_image } = req.body;
+  console.log("line:2", category_image);
   const category_id = parseInt(id, 10);
+  console.log("line:3", category_id);
 
   if (isNaN(category_id)) {
     return res.status(400).json({ error: 'Invalid category ID' });
   }
 
-  const buffer = req.file?.buffer;
-  const mimeType = req.file?.mimetype;
+  if (req.file) {
+    const buffer = req.file.buffer;
+    const mimeType = req.file.mimetype;
 
-  if (!buffer || !mimeType) {
-    return res.status(400).json({ error: 'Invalid image file' });
-  }
+    if (!buffer || !mimeType) {
+      return res.status(400).json({ error: 'Invalid image file' });
+    }
 
-  const extension = mime.extension(mimeType);
-  const fileName = `${uuidv4()}.${extension}`;
+    const extension = mime.extension(mimeType);
+    const fileName = `${uuidv4()}.${extension}`;
 
-  try {
-    // Delete the existing image from S3
-    const deleteParams = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: req.body.key
-    };
+    try {
+      // Delete the existing image from S3
+      const deleteParams = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: req.body.key
+      };
 
-    await s3.deleteObject(deleteParams).promise();
+      await s3.deleteObject(deleteParams).promise();
 
-    // Upload the new image to S3
-    const uploadParams = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: fileName,
-      Body: buffer,
-      ContentType: mimeType,
-      ACL: 'public-read'
-    };
+      // Upload the new image to S3
+      const uploadParams = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: fileName,
+        Body: buffer,
+        ContentType: mimeType,
+        ACL: 'public-read'
+      };
 
-    s3.upload(uploadParams, async (err, data) => {
-      if (err) {
-        console.error('Error uploading image to S3:', err);
-        return res.status(500).json({ error: 'Failed to upload image' });
-      }
-
-      const category_image = data.Location;
-      const key = data.Key;
-
-      try {
-        const updatedCategory = await CategoryRepo.update(category_id, category_name, category_image, number_of_products, key);
-
-        if (updatedCategory) {
-          return res.json(updatedCategory);
-        } else {
-          return res.sendStatus(404);
+      s3.upload(uploadParams, async (err, data) => {
+        if (err) {
+          console.error('Error uploading image to S3:', err);
+          return res.status(500).json({ error: 'Failed to upload image' });
         }
-      } catch (dbError) {
-        console.error("Error updating category in database:", dbError);
-        return res.status(500).json({ error: "Internal Server Error" });
+
+        category_image = data.Location;
+        const key = data.Key;
+
+        try {
+          const updatedCategory = await CategoryRepo.update(category_id, category_name, category_image, number_of_products, key);
+
+          if (updatedCategory) {
+            return res.json(updatedCategory);
+          } else {
+            return res.sendStatus(404);
+          }
+        } catch (dbError) {
+          console.error("Error updating category in database:", dbError);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+      });
+    } catch (s3Error) {
+      console.error('Error deleting image from S3:', s3Error);
+      return res.status(500).json({ error: 'Failed to delete image' });
+    }
+  } else {
+    // If no new image file, update with the provided category_image URL
+    try {
+      const key = req.body.key; // Assuming the key is passed in the body
+      
+
+      const updatedCategory = await CategoryRepo.update(category_id, category_name, category_image, number_of_products, key);
+
+      if (updatedCategory) {
+        return res.json(updatedCategory);
+      } else {
+        return res.sendStatus(404);
       }
-    });
-  } catch (s3Error) {
-    console.error('Error deleting image from S3:', s3Error);
-    return res.status(500).json({ error: 'Failed to delete image' });
+    } catch (dbError) {
+      console.error("Error updating category in database:", dbError);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
   }
 });
 
@@ -164,7 +188,7 @@ router.delete("/category/:id", async (req, res) => {
     console.log("line:1", category_id);
 
     // Access the key from the request body
-    const { key } = req.body; 
+    const { key } = req.body;
 
     const params = {
       Bucket: process.env.BUCKET_NAME,

@@ -22,13 +22,19 @@ class AuthRepo {
     full_name,
     profile_picture_url,
     password,
+    role
   }) {
+    console.log("line:1", username);
+    console.log("line:2", email);
+    console.log("line:3", full_name);
+    console.log("line:4", profile_picture_url);
+    console.log("line:5", role);
     try {
       const passwordHash = await bcrypt.hash(password, 10);
 
       const userInsertQuery = `
-        INSERT INTO "users" (username, email, full_name, profile_picture_url)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO "users" (username, email, full_name, profile_picture_url, role)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING *;
       `;
 
@@ -37,6 +43,7 @@ class AuthRepo {
         email,
         full_name,
         profile_picture_url,
+        role
       ]);
 
       const authInsertQuery = `

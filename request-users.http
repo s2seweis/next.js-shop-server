@@ -42,7 +42,7 @@ content-type: application/json
 
 ### Delete User - works
 
-DELETE http://localhost:3005/users/38 HTTP/1.1 
+DELETE http://localhost:3005/users/128 HTTP/1.1 
 content-type: application/json
 
 

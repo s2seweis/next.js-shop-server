@@ -8,8 +8,19 @@ const upload = multer();
 // Register a new user - works
 router.post("/register", upload.none(), async (req, res) => {
   try {
-    const { username, email, full_name, profile_picture_url, password } =
+    const { name, email, username, password } =
       req.body;
+
+      console.log("line:1", name);
+      console.log("line:2", email);
+      console.log("line:3", username);
+      console.log("line:4", password);
+
+      const profile_picture_url = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png';
+      console.log("line:5", profile_picture_url);      
+      const full_name = name;
+      console.log("line:6", full_name);
+      const role = 'user';
    
     // Check if the user already exists
     const existingUser = await AuthRepo.getUserByEmail(email);
@@ -24,6 +35,7 @@ router.post("/register", upload.none(), async (req, res) => {
         full_name,
         profile_picture_url,
         password,
+        role
       });
       res.json({ message: "Registration successful", user: newUser });
     }
