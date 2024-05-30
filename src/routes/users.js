@@ -69,15 +69,28 @@ router.post("/users", upload.none(), async (req, res) => {
 router.put("/users/:user_id", async (req, res) => {
   try {
     const { user_id } = req.params;
-    const { username, email, full_name, profile_picture_url, role } = req.body;
-   
+    console.log("line:1", user_id);
+    const { blocked, email, fullName, role, username } = req.body;
+    console.log("line: body", req.body);
+
+    console.log("line:2", blocked);
+    console.log("line:3", email);
+    console.log("line:4", fullName);
+    console.log("line:5", role);
+
+    const full_name = fullName;
+    console.log("line:6", username);
+    const profile_picture_url = 'https://upload.wikimedia.org/wikipedia/en/b/b1/Portrait_placeholder.png';
+    console.log("line:7", profile_picture_url);
+
     const user = await UserRepo.update(
       user_id,
       username,
       email,
       full_name,
       profile_picture_url,
-      role
+      role,
+      blocked
     );
 
     if (user) {
@@ -97,11 +110,11 @@ router.put("/password/:user_id", async (req, res) => {
   try {
     const { user_id } = req.params;
     const { userId, newPassword } = req.body;
-    
+
     const password = await UserRepo.updatePassword(
-     user_id,
-     newPassword
-  
+      user_id,
+      newPassword
+
     );
 
     if (password) {

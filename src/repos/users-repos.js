@@ -52,11 +52,12 @@ class UserRepo {
     email,
     full_name,
     profile_picture_url,
-    role
+    role,
+    blocked
   ) {
     const { rows } = await pool.query(
-      "UPDATE Users SET username = $2, email = $3, full_name = $4, profile_picture_url = $5, role = $6 WHERE user_id = $1 RETURNING *;",
-      [user_id, username, email, full_name, profile_picture_url, role]
+      "UPDATE Users SET username = $2, email = $3, full_name = $4, profile_picture_url = $5, role = $6, blocked= $7 WHERE user_id = $1 RETURNING *;",
+      [user_id, username, email, full_name, profile_picture_url, role, blocked]
     );
 
     return toCamelCase(rows)[0];
